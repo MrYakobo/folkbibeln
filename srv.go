@@ -34,16 +34,22 @@ func handl(w http.ResponseWriter, r *http.Request) {
 	message = strings.TrimPrefix(message, "/")
 
 	if contains(abbr, message) {
-		cmd, err := exec.Command("./sfb98", "-W", message).Output()
+
+		version := "./sfb98"
+		_, ok := r.URL.Query()["sfb15"]
+		if ok {
+			version = "./sfb15"
+		}
+		cmd, err := exec.Command(version, "-W", message).Output()
 		if err != nil || strings.Contains(string(cmd), "Unknown reference:") {
 			fmt.Println(err)
-			w.WriteHeader(401)
+			w.WriteHeader(400)
 			w.Write([]byte("Error: The requested passage does not exist\n"))
 			w.Write(cmd)
 			return
 		}
 
-		_, ok := r.URL.Query()["annotate"]
+		_, ok = r.URL.Query()["annotate"]
 		if !ok {
 			cmd = cleanOutput(cmd)
 		}
