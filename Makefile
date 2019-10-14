@@ -1,5 +1,7 @@
+.DEFAULT_GOAL := sfb98
+
 general:
-	git clone 'https://github.com/bontibon/kjv'
+	if [ ! -d kjv ]; then git clone 'https://github.com/bontibon/kjv'; fi
 	curl $(url) | ./conv.py > kjv/kjv.tsv
 	cd kjv && make
 	mv kjv/kjv $(name)
