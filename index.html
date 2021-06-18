@@ -6,10 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>sfb</title>
   <style>
-      code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      span.underline{text-decoration: underline;}
-      div.column{display: inline-block; vertical-align: top; width: 50%;}
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <link rel="stylesheet" href="pandoc.css" />
   <!--[if lt IE 9]>
@@ -17,20 +20,13 @@
   <![endif]-->
 </head>
 <body>
-<h1 id="sfb"><a href="https://github.com/MrYakobo/sfb.git">sfb</a></h1>
-<p>This is an api to access the word of god in Swedish. It utilizes bontibon’s excellent script <a href="https://github.com/bontibon/kjv">kjv</a>.</p>
-<p>This project scrapes xml files from <a href="http://folkbibeln.it">folkbibeln.it</a> and turns it into tsv, the format used by kjv. A simple web server is written in Go to faciliate requests.</p>
-<p>HTTP requests and parameters are passed like in ordinary to kjv, except the books are from SFB. The default output is cleaned up a bit (stripping the header and verse numbers), making it easy for applications to “look up” a bible verse. A HTTP parameter <code>?annotate</code> can be supplied to get kjvs default output instead. Defaults to <code>sfb98</code>, can be changed with the parameter <code>?sfb15</code>.</p>
+<h1 id="sfb">sfb</h1>
+<p>Lookup the word of God from an API This api defaults to <code>sfb98</code>, can be changed with the parameter <code>?sfb15</code>.</p>
 <h3 id="examples">Examples</h3>
 <pre><code>&gt; GET /1 Mos 1:1
 &lt; HTTP/1.1 200 OK
 &lt;
 I begynnelsen skapade Gud himmel och jord.</code></pre>
-<pre><code>&gt; GET /Joh 3:16?annotate
-&lt; HTTP/1.1 200 OK
-&lt;
-Johannesevangeliet
-3:16    Ty så älskade Gud världen att han utgav sin enfödde Son, för att den som tror på honom inte skall gå förlorad utan ha evigt liv.</code></pre>
 <pre><code>&gt; GET /Matt 17:21
 &lt; HTTP/1.1 200 OK
 &lt; </code></pre>
@@ -50,7 +46,7 @@ FLAGS := (annotate|sfb15)
 REQUEST := GET /(BOOK)?[FLAGS]</code></pre>
 <h2 id="install">Install</h2>
 <pre><code>git clone https://github.com/MrYakobo/sfb.git
-make sfb98
-go run srv.go PORT</code></pre>
+./util.sh sfb98
+./srv.py PORT</code></pre>
 </body>
 </html>

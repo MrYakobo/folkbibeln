@@ -1,10 +1,7 @@
-# [sfb](https://github.com/MrYakobo/sfb.git)
+# sfb
 
-This is an api to access the word of god in Swedish. It utilizes bontibon's excellent script [kjv](https://github.com/bontibon/kjv).
-
-This project scrapes xml files from [folkbibeln.it](http://folkbibeln.it) and turns it into tsv, the format used by kjv. A simple web server is written in Go to faciliate requests.
-
-HTTP requests and parameters are passed like in ordinary to kjv, except the books are from SFB. The default output is cleaned up a bit (stripping the header and verse numbers), making it easy for applications to "look up" a bible verse. A HTTP parameter `?annotate` can be supplied to get kjvs default output instead. Defaults to `sfb98`, can be changed with the parameter `?sfb15`.
+Lookup the word of God from an API
+This api defaults to `sfb98`, can be changed with the parameter `?sfb15`.
 
 ### Examples
 
@@ -13,14 +10,6 @@ HTTP requests and parameters are passed like in ordinary to kjv, except the book
 < HTTP/1.1 200 OK
 <
 I begynnelsen skapade Gud himmel och jord.
-```
-
-```
-> GET /Joh 3:16?annotate
-< HTTP/1.1 200 OK
-<
-Johannesevangeliet
-3:16	Ty så älskade Gud världen att han utgav sin enfödde Son, för att den som tror på honom inte skall gå förlorad utan ha evigt liv.
 ```
 
 ```
@@ -57,6 +46,6 @@ REQUEST := GET /(BOOK)?[FLAGS]
 
 ```
 git clone https://github.com/MrYakobo/sfb.git
-make sfb98
-go run srv.go PORT
+./util.sh sfb98
+./srv.py PORT
 ```
