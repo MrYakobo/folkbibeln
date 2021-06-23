@@ -3,7 +3,7 @@
 import pandas as pd
 
 import sys
-from flask import Flask, request
+from flask import Flask, request, redirect
 
 app = Flask(__name__, template_folder="")
 
@@ -78,9 +78,20 @@ def lookup(ref, key):
 
     return " ".join(verses)
 
+@app.route("/", methods=["GET"])
+def idx():
+    return app.send_static_file('index.html')
 
 @app.route("/<reference>", methods=["GET"])
-def idx(reference):
+def lookup_ref(reference):
+    # check if the reference starts with a book
+    # otherwise, just respond with redirect
+
+    try:
+        book_lookup(reference)
+    except ReferenceError:
+        redirect("/")
+
     if "sfb15" in request.args:
         key = "15"
     else:
@@ -90,6 +101,26 @@ def idx(reference):
         return lookup(reference.lower(), key)
     except ReferenceError as e:
         return str(e), 404
+
+
+# more powerful logging
+@app.after_request
+def after_request(response):
+    """Logging after every request."""
+    logger = logging.getLogger("app.access")
+    logger.info(
+        "%s [%s] %s %s %s %s %s %s %s",
+        request.remote_addr,
+        dt.utcnow().strftime("%d/%b/%Y:%H:%M:%S.%f")[:-3],
+        request.method,
+        request.path,
+        request.scheme,
+        response.status,
+        response.content_length,
+        request.referrer,
+        request.user_agent,
+    )
+    return response
 
 
 port = sys.argv[1]
