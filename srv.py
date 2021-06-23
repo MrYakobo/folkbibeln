@@ -4,9 +4,8 @@ import pandas as pd
 
 import sys
 from flask import Flask, request, redirect
-
-app = Flask(__name__, template_folder="")
-
+import logging
+from datetime import datetime
 
 data = {}
 
@@ -79,14 +78,26 @@ def lookup(ref, key):
 
     return " ".join(verses)
 
+
+app = Flask(__name__, template_folder="", static_url_path="")
+
+
 @app.route("/", methods=["GET"])
 def idx():
-    return app.send_static_file('index.html')
+    return app.send_static_file("index.html")
+
 
 @app.route("/<reference>", methods=["GET"])
 def lookup_ref(reference):
     # check if the reference starts with a book
     # otherwise, just respond with redirect
+
+    # the ip is in X-Forwarded-For
+    try:
+        ip = request.headers["X-Forwarded-For"]
+        print("REAL IP:", ip)
+    except KeyError:
+        pass
 
     try:
         book_lookup(reference)
@@ -104,22 +115,11 @@ def lookup_ref(reference):
         return str(e), 404
 
 
-# more powerful logging
+# Useful debugging interceptor to log all endpoint responses
 @app.after_request
-def after_request(response):
-    """Logging after every request."""
-    logger = logging.getLogger("app.access")
-    logger.info(
-        "%s [%s] %s %s %s %s %s %s %s",
-        request.remote_addr,
-        dt.utcnow().strftime("%d/%b/%Y:%H:%M:%S.%f")[:-3],
-        request.method,
-        request.path,
-        request.scheme,
-        response.status,
-        response.content_length,
-        request.referrer,
-        request.user_agent,
+def after(response):
+    app.logger.debug(
+        "response: " + response.status + ", " + response.data.decode("utf-8")
     )
     return response
 
