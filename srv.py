@@ -11,7 +11,7 @@ app = Flask(__name__, template_folder="")
 data = {}
 
 for version in ["98", "15"]:
-    df = pd.read_csv("sfb98.tsv", sep="\t", header=None)
+    df = pd.read_csv(f"data/sfb{version}.tsv", sep="\t", header=None)
     df.columns = [
         "book_name",
         "book_abbr",
@@ -64,6 +64,7 @@ def lookup(ref, key):
         # only chapter supplied, 1 Mos 1
         verses = df.loc[book_num, chap_num, :].verse.values
     elif len(rest) == 2:
+        # chapter and verse
         verse_range = rest[1].strip().split("-")
         verse_lo = int(verse_range[0])
         if len(verse_range) == 1:

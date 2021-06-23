@@ -3,6 +3,7 @@
 URL=''
 NAME="$1"
 
+
 if [ "$NAME" = "sfb98" ]; then
     URL='http://www.folkbibeln.it/arkiv/SFB_1998_Open_Song_v1.xml' 
 elif [ "$NAME" = "sfb15" ]; then
@@ -15,4 +16,5 @@ else
 	exit 1
 fi
 
+mkdir -p data
 curl "$URL" | ./conv.py > "data/$NAME.tsv"
