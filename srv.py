@@ -3,14 +3,18 @@
 import pandas as pd
 
 import sys
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, send_from_directory
 import logging
 from datetime import datetime
+
+import csv
 
 data = {}
 
 for version in ["98", "15"]:
-    df = pd.read_csv(f"data/sfb{version}.tsv", sep="\t", header=None)
+    df = pd.read_csv(
+        f"data/sfb{version}.tsv", sep="\t", header=None, quoting=csv.QUOTE_NONE
+    )
     df.columns = [
         "book_name",
         "book_abbr",
@@ -82,13 +86,9 @@ def lookup(ref, key):
 app = Flask(__name__, template_folder="", static_url_path="")
 
 
-@app.route("/", methods=["GET"])
-def idx():
-    return app.send_static_file("index.html")
-
-
 @app.route("/<reference>", methods=["GET"])
 def lookup_ref(reference):
+    reference = reference.replace("_", " ")
     # check if the reference starts with a book
     # otherwise, just respond with redirect
 
@@ -98,11 +98,6 @@ def lookup_ref(reference):
         print("REAL IP:", ip)
     except KeyError:
         pass
-
-    try:
-        book_lookup(reference)
-    except ReferenceError:
-        redirect("/")
 
     if "sfb15" in request.args:
         key = "15"
